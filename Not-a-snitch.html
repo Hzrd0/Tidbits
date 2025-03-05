@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap" rel="stylesheet">
     <style>
         body {
-            background: url('images/sky.jpg') no-repeat center center fixed; /* Corrected here */
+            background: url('images/sky.jpg') no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             height: 100vh;
@@ -25,17 +25,18 @@
             font-size: 48px;
             max-width: 80%;
             line-height: 1.5;
-            white-space: nowrap;
-            border-right: 2px solid white;
+            white-space: normal; /* Allow text to wrap properly */
             display: inline-block;
             padding-right: 5px;
+            overflow-wrap: break-word; /* Ensure long words break to the next line */
+            word-wrap: break-word; /* Support older browsers */
         }
     </style>
 </head>
 <body>
 
     <audio id="bg-music" loop>
-        <source src="New folder/Music/Parfum.mp3" type="audio/mpeg">
+        <source src="Music/Parfum.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
     <div id="text-display"></div>
