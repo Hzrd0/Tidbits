@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing GIF with Clickable Text</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #040204;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            transition: background 1s ease-in-out;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        @keyframes petcopBounce {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-10px, -5px) rotate(-5deg); }
+            40% { transform: translate(10px, 5px) rotate(5deg); }
+            60% { transform: translate(-5px, 10px) rotate(-5deg); }
+            80% { transform: translate(5px, -10px) rotate(5deg); }
+        }
+
+        #bottom-text {
+            color: white;
+            font-size: 3.5rem;
+            font-family: 'Caveat Brush', cursive;
+            position: relative;
+            animation: petcopBounce 3s infinite ease-in-out;
+        }
+
+        .floating-text {
+            font-family: 'Caveat Brush', cursive;
+            color: white;
+            font-size: 1.5rem;
+            position: absolute;
+            transition: font-size 0.3s ease;
+        }
+
+        @keyframes swoosh1 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(10px) translateY(-10px); }
+        }
+
+        @keyframes swoosh2 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-15px) translateY(5px); }
+        }
+
+        @keyframes swoosh3 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(5px) translateY(-15px); }
+        }
+
+        @keyframes swoosh4 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-10px) translateY(10px); }
+        }
+
+        @keyframes swoosh5 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(20px) translateY(-5px); }
+        }
+
+        @keyframes swoosh6 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-5px) translateY(20px); }
+        }
+
+        @keyframes swoosh7 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(10px) translateY(5px); }
+        }
+
+        #text-1 { top: 10%; left: 10%; animation: swoosh1 4s infinite ease-in-out; }
+        #text-2 { top: 25%; left: 50%; animation: swoosh2 4s infinite ease-in-out; }
+        #text-3 { top: 40%; left: 70%; animation: swoosh3 4s infinite ease-in-out; }
+        #text-4 { top: 60%; left: 30%; animation: swoosh4 4s infinite ease-in-out; }
+        #text-5 { top: 80%; left: 60%; animation: swoosh5 4s infinite ease-in-out; }
+        #text-6 { top: 70%; left: 80%; animation: swoosh6 4s infinite ease-in-out; }
+        #text-7 { top: 90%; left: 20%; animation: swoosh7 4s infinite ease-in-out; }
+    </style>
+</head>
+<body>
+
+    <div id="bottom-text">You've gone and found me!</div>
+
+    <div class="floating-text" id="text-1">For Whom The Bell Tolls</div>
+    <div class="floating-text" id="text-2">Symphonies</div>
+    <div class="floating-text" id="text-3">And Though</div>
+    <div class="floating-text" id="text-4">Kitchen Fan</div>
+    <div class="floating-text" id="text-5">The problem with the pipes</div>
+    <div class="floating-text" id="text-6">The sterile song</div>
+
+    <div class="floating-text" id="text-7">
+    	<a href="not-a-snitch.html" style="color: white; text-decoration: none;">Not a snitch</a>
+    </div>
+
+
+
+    <!-- Background music -->
+    <audio id="bg-music" loop>
+        <source src="neuron.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const text = document.getElementById("bottom-text");
+        const centerText = document.getElementById("center-text");
+        const music = document.getElementById("bg-music");
+
+        let textIndex = 0;
+        let isTyping = false;
+        let rewardUnlocked = false;
+
+        const textSequence = [
+            "Janet didn't ever listen. Not to me. Not to mom. Not to her teachers or even God. At night I would catch her skipping prayer.",
+            "Mom called me a snitch when I told her. \"Janet's fine dear! She probably just forgot. Don't be such a snitch.\" but I'm not.",
+            "Every morning is the same. A harsh noise coming from the bathroom. Rushing water. Blasting pop. Or Rock. Or whatever she's feeling that day. It's 7:40. School starts at 8:15. Guess I'm wearing a hat today. I can shower after school",
+            "The screw into the hole. The cat chases the mouse. The parent, the child. We had a paper due at school, we were partners. Simple enough. Mesopotamian irrigation. Simple. Essay. Simple. 4 pages, 2 each. So why did I do them all. And why did she put her name first? Simple.",
+            "He said no when I asked him. A spit in my face, a slap, a beatdown. A tear in my heart. A disaster. A cabaret. Cacophony. Cerebral. Cellophane. Cremation. Celebration. A party with balloons. A coronation. He was there too. There for her. Mingled fingers, intertwined lips. At a sweet sixteen.",
+            "The last thing I said to her was unheard, obviously. Made evident by the swinging mass in front of me. Another \"I love you\" not taken to heart. Another plead left unheard. Another \"Don't do it\" disobeyed. And fuck me for being gullible. But I am not a snitch.",
+            "I never know what to say. But now I know even less. The harsh light. The crowd of black with blue. Fuck even her picture next to me. I feel sick. I feel sick. I feel fucking sick. What do I do. What can I do. Those arent even questions because theres nothing I can do. I swallow whats in my mouth and ",
+        ];
+
+        // Add mousemove event listener to trigger text size change
+        document.addEventListener('mousemove', function(e) {
+            const texts = document.querySelectorAll('.floating-text');
+            texts.forEach(text => {
+                const rect = text.getBoundingClientRect();
+                const distance = Math.sqrt(Math.pow(e.clientX - (rect.left + rect.width / 2), 2) + Math.pow(e.clientY - (rect.top + rect.height / 2), 2));
+
+                // Increase font size when mouse is near, else revert
+                if (distance < 200) {
+                    text.style.fontSize = '3rem'; // Increase size when close
+                } else {
+                    text.style.fontSize = '1.5rem'; // Normal size
+                }
+            });
+        });
+
+        document.addEventListener("click", function () {
+            if (!rewardUnlocked) {
+                if (music.paused) {
+                    music.play().catch(error => console.log("Autoplay blocked:", error));
+                }
+            } else if (!isTyping && textIndex < textSequence.length) {
+                typeText(textSequence[textIndex]);
+            }
+        });
+
+        function unlockReward() {
+            // Change background image
+            document.body.style.background = "url('sky.jpg') no-repeat center center fixed";
+            document.body.style.backgroundSize = "cover";
+
+            // Change music
+            music.src = "parfum.mp3"; 
+            music.play().catch(error => console.log("Autoplay blocked:", error));
+
+            // Hide existing elements
+            text.style.display = "none";
+
+            // Show new text container
+            centerText.style.display = "block";
+
+            rewardUnlocked = true;
+
+            if (textIndex < textSequence.length) {
+                typeText(textSequence[textIndex]);
+            }
+        }
+
+        function typeText(sentence) {
+            isTyping = true;
+            centerText.innerHTML = "";
+            let i = 0;
+
+            function type() {
+                if (i < sentence.length) {
+                    centerText.innerHTML += sentence.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                } else {
+                    isTyping = false;
+                    textIndex++;
+                }
+            }
+
+            type();
+        }
+    </script>
+
+</body>
+</html>
