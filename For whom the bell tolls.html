@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swinging</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: url('images/sky.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: 'Caveat Brush', cursive;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        #text-display {
+            font-size: 48px;
+            max-width: 80%;
+            line-height: 1.5;
+            display: inline-block;
+            word-wrap: break-word;
+        }
+
+	/* Style for the hover effect */
+	.hover-highlight {
+	    position: relative;
+	    display: inline-block;
+	    padding: 5px 10px;
+	    transition: color 0.3s ease-in-out;
+	    z-index: 2;
+	}
+
+	/* Background bubble effect */
+	.hover-highlight::before {
+	    content: "";
+	    position: absolute;
+	    top: -10px;
+	    left: -15px;
+	    width: calc(100% + 30px);
+	    height: calc(100% + 20px);
+	    background: url('images/sky.jpg') no-repeat center center;
+	    background-size: cover;
+	    border-radius: 20px;
+ 	    opacity: 0;
+ 	    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  	    z-index: -1;
+	}
+
+	/* Show bubble on hover */
+	.hover-highlight:hover::before {
+	    opacity: 1;
+	    transform: scale(1.1); /* Slightly expand for emphasis */
+	}
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="Music/Parfum.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <div id="text-display"></div>
+
+    <script>
+        const sentences = [
+            "Laying in bed, he heard the signature chime.",
+            "Convulsions or conniptions, they kept life from leaving.",
+            "Another night of meandering from the bed.",
+            "The day that follows is always full of wonder.",
+            "Either a birthday, some sort of party.",
+            "Countless christmas nights, and peculiar outings.",
+            "He had stopped having party’s ages ago.",
+	    "Yet those restless nights never left.",
+	    "Now replaced by something new, he felt it tonight.",
+	    "Tomorrow, full of possibilities.",
+	    "He drew another breath.",
+	    "Tomorrow, another new day.",
+	    "Shallower than he used to.",
+	    "Tomorrow, a time for discovery.",
+	    "Hitching and harsh.",
+	    "He heard the signature chime.",
+
+        ];
+
+        let currentSentenceIndex = 0;
+        let isTyping = false;
+
+	function typeText(sentence) {
+	    const textDisplay = document.getElementById("text-display");
+	    textDisplay.innerHTML = ''; // Clear previous text
+	    currentCharIndex = 0;
+	    isTyping = true;
+
+	    function typeCharacter() {
+	        textDisplay.innerHTML = sentence.slice(0, currentCharIndex + 1);
+	        currentCharIndex++;
+	        if (currentCharIndex < sentence.length) {
+	            setTimeout(typeCharacter, 50);
+	        } else {
+	            isTyping = false;
+	        }
+	    }
+
+	    typeCharacter();
+	}
+
+        document.addEventListener("click", function() {
+            if (currentSentenceIndex < sentences.length && !isTyping) {
+                typeText(sentences[currentSentenceIndex]);
+                currentSentenceIndex++;
+            }
+        });
+
+        document.addEventListener("click", function() {
+            const music = document.getElementById("bg-music");
+            if (music.paused) {
+                music.play().catch(error => console.log("Autoplay blocked:", error));
+            }
+        });
+    </script>
+</body>
+</html>
