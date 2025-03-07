@@ -19,17 +19,73 @@
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
             text-align: center;
             overflow: hidden;
+            padding: 20px;
         }
 
         #text-display {
             font-size: 48px;
             max-width: 80%;
             line-height: 1.5;
-            white-space: normal; /* Allow text to wrap properly */
             display: inline-block;
-            padding-right: 5px;
-            overflow-wrap: break-word; /* Ensure long words break to the next line */
-            word-wrap: break-word; /* Support older browsers */
+            word-wrap: break-word;
+        }
+
+        .text-row {
+            display: block;
+        }
+
+        /* Back button styling */
+        #back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: none; /* Hidden by default */
+            background: none;
+            border: none;
+            color: white;
+            font-family: 'Caveat Brush', cursive;
+            font-size: 20px;
+            opacity: 0.7;
+            cursor: pointer;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #back-button img {
+            width: 20px;
+            height: 20px;
+            margin-left: 5px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #back-button:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        #back-button:hover img {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* Skip button styling */
+        #skip-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-family: 'Caveat Brush', cursive;
+            font-size: 20px;
+            opacity: 0.7;
+            cursor: pointer;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #skip-button:hover {
+            opacity: 1;
+            transform: translateX(-50%) scale(1.2);
         }
     </style>
 </head>
@@ -39,56 +95,177 @@
         <source src="Music/Parfum.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
+    
     <div id="text-display"></div>
+    <button id="back-button">
+        Back
+        <img src="images/back.png" alt="Back">
+    </button>
+    <button id="skip-button">Skip to End</button>
 
     <script>
-        const sentences = [
-            "Janet didn't ever listen. Not to me. Not to mom. Not to her teachers or even God. At night I would catch her skipping prayer.",
-            "Mom called me a snitch when I told her. \"Janet's fine dear! She probably just forgot. Don't be such a snitch.\" but I'm not.",
-            "Every morning is the same. A harsh noise coming from the bathroom. Rushing water. Blasting pop. Or Rock. Or whatever she's feeling that day. It's 7:40. School starts at 8:15. Guess I'm wearing a hat today.",
-            "The screw into the hole. The cat chases the mouse. The parent, the child. We had a paper due at school, we were partners. Simple enough. Mesopotamian irrigation. Simple. Essay. Simple. 4 pages, 2 each. So why did I do them all. And why did she put her name first? Simple.",
-            "He said no when I asked him. A spit in my face, a slap, a beatdown. A tear in my heart. A disaster. A cabaret. Cacophony. Cerebral. Cellophane. Cremation. Celebration. A party with balloons. A coronation. He was there too. There for her. Mingled fingers, intertwined lips. At a sweet sixteen.",
-            "The last thing I said to her was unheard, obviously. Made evident by the swinging mass in front of me. Another \"I love you\" not taken to heart. Another plead left unheard. Another \"Don't do it\" disobeyed. And fuck me for being gullible. But I am not a snitch.",
-            "I never know what to say. But now I know even less. The harsh light. The crowd of black with blue. Fuck even her picture next to me. I feel sick. I feel sick. I feel fucking sick. What do I do. What can I do. Those arent even questions because theres nothing I can do. I swallow whats in my mouth and "
+        const groups = [
+            [
+                "Janet didn't ever listen.",
+                "Not to me.|Not to mom. |Not to her teachers or even God.",
+                "At night I would catch her skipping prayer."
+            ],
+            [
+                "Mom called me a snitch when I told her.",
+                "\"Janet's fine dear!| She probably just forgot. |Don't be such a snitch.\"",
+                "But I'm not."
+            ],
+            [
+                "Every morning is the same.| A harsh noise coming from the bathroom.",
+                "Rushing water.| Blasting pop. Or Rock.| Or whatever she's feeling that day.",
+                "It's 7:40.| School starts at 8:15.",
+            ],
+            [
+                "Guess I'm wearing a hat today."
+            ],
+            [
+                "The screw into the hole.| The cat chases the mouse.| The parent,| the child.",
+                "We had a paper due at school, we were partners.| Simple enough."
+            ],
+            [
+                "Mesopotamian irrigation.| Simple.",
+                "Essay.| Simple.",
+                "4 pages,| 2 each."
+            ],
+            [
+                "So why did I do them all?| And why did she put her name first?",
+                "Simple."
+            ],
+            [
+                "He said no when I asked him.",
+                "A spit in my face.| A slap.| A beatdown.| A tear in my heart.| A disaster. A cabaret. Cacophony. Cerebral. Cellophane. Cremation.",
+                "Celebration.| A party with balloons.| A coronation.",
+                "He was there too. There for her.",
+            ],
+            [
+                "Mingled fingers.",
+                "Intertwined lips.",
+                "At a sweet sixteen.",
+            ],
+            [
+                "The last thing I said to her was unheard,| obviously.",
+                "Made evident by the swinging mass in front of me.",
+            ],
+            [
+                "Another \"I love you\"| not taken to heart.",
+                "Another plea| left unheard.",
+                "Another \"Don't do it\"| disobeyed.",
+            ],
+            [
+                "And fuck me for being gullible."
+            ],
+            [
+                "But I am not a snitch."
+            ]
         ];
 
+        let currentGroupIndex = 0;
         let currentSentenceIndex = 0;
-        let currentCharIndex = 0;
-        let isTyping = false; // Prevent new sentences from starting until the current one is done typing
+        let currentPartIndex = 0;
+        let isTyping = false;
+        let currentParts = [];
 
-        function typeText(sentence) {
-            const textDisplay = document.getElementById("text-display");
-            textDisplay.textContent = ''; // Clear previous text
-            currentCharIndex = 0;
-            isTyping = true; // Set typing status to true
+        const textDisplay = document.getElementById("text-display");
+        const backButton = document.getElementById("back-button");
+        const skipButton = document.getElementById("skip-button");
+
+        function typeText(text, rowElement) {
+            let currentCharIndex = 0;
+            isTyping = true;
+
+            const partSpan = document.createElement("span");
+            rowElement.appendChild(partSpan);
 
             function typeCharacter() {
-                textDisplay.textContent += sentence.charAt(currentCharIndex);
+                partSpan.textContent += text[currentCharIndex];
                 currentCharIndex++;
-                if (currentCharIndex < sentence.length) {
-                    setTimeout(typeCharacter, 100); // Adjust speed here (in milliseconds)
+                if (currentCharIndex < text.length) {
+                    setTimeout(typeCharacter, 50);
                 } else {
-                    isTyping = false; // Typing is finished
+                    isTyping = false;
+                    if (currentPartIndex < currentParts.length - 1) {
+                        partSpan.textContent += " ";
+                    }
                 }
             }
 
             typeCharacter();
         }
 
-        document.addEventListener("click", function() {
-            if (currentSentenceIndex < sentences.length && !isTyping) {
-                typeText(sentences[currentSentenceIndex]);
-                currentSentenceIndex++;
+        function wipeScreen() {
+            textDisplay.innerHTML = '';
+        }
+
+        function showLastSentence() {
+            wipeScreen();
+            currentGroupIndex = groups.length - 1;
+            currentSentenceIndex = 0;
+            currentParts = groups[currentGroupIndex][currentSentenceIndex].split("|");
+            const rowElement = document.createElement("div");
+            rowElement.classList.add("text-row");
+            textDisplay.appendChild(rowElement);
+            typeText(currentParts.join(" "), rowElement);
+            backButton.style.display = 'block';
+        }
+
+        document.addEventListener("click", function () {
+            if (isTyping) return;
+
+            const currentGroup = groups[currentGroupIndex];
+
+            if (currentSentenceIndex < currentGroup.length) {
+                const sentence = currentGroup[currentSentenceIndex];
+
+                if (currentParts.length === 0) {
+                    currentParts = sentence.split("|");
+                    currentPartIndex = 0;
+
+                    const rowElement = document.createElement("div");
+                    rowElement.classList.add("text-row");
+                    textDisplay.appendChild(rowElement);
+                }
+
+                if (currentPartIndex < currentParts.length) {
+                    const lastRow = textDisplay.lastChild;
+                    typeText(currentParts[currentPartIndex], lastRow);
+                    currentPartIndex++;
+                }
+
+                if (currentPartIndex >= currentParts.length) {
+                    currentSentenceIndex++;
+                    currentParts = [];
+                }
+            } else {
+                wipeScreen();
+                currentGroupIndex = (currentGroupIndex + 1) % groups.length;
+                currentSentenceIndex = 0;
+                currentParts = [];
+
+                // Show the back button after the last sentence
+                if (currentGroupIndex === groups.length - 1 && currentSentenceIndex === 0) {
+                    backButton.style.display = 'block';
+                }
             }
         });
 
-        // Start playing music on first click (autoplay after interaction)
-        document.addEventListener("click", function() {
+        document.addEventListener("click", function () {
             const music = document.getElementById("bg-music");
             if (music.paused) {
                 music.play().catch(error => console.log("Autoplay blocked:", error));
             }
         });
+
+        backButton.addEventListener("click", function () {
+            localStorage.setItem('backButtonPressed', 'true');
+            window.location.href = 'index.html';
+        });
+
+        skipButton.addEventListener("click", showLastSentence);
     </script>
 </body>
 </html>
